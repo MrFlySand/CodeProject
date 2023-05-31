@@ -24,7 +24,6 @@ import sys
 def GetSiteList(start, end,path):
   siteLists = []
   print("\n程序正在运行...")
-  print(start,end)
   for i in range(start, end):
     parser = etree.HTMLParser(encoding='utf-8')
     try:
@@ -42,22 +41,24 @@ def GetSiteList(start, end,path):
 def GetName(siteList,path):
   headers = {"User-Agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36 Edg/105.0.1343.33"}
   # 创建表格
-  workbook = xlsxwriter.Workbook(path+(str(datetime.date.today())+'-官微每月作品表.xlsx'))
+  workbook = xlsxwriter.Workbook(path+(str(datetime.date.today())+'-官微作品表.xlsx'))
   worksheet = workbook.add_worksheet()
   worksheet.merge_range('A1:I1',"记者团官方微信公众号 每月作品表汇总")
   bold = workbook.add_format({'bold': True,"align":"center"})
   worksheet.write('A1', '记者团官方微信公众号 每月作品表汇总', workbook.add_format({'bold': True,"size":15,"align":"center"}))
-  worksheet.write('A2', '日期', bold)
-  worksheet.write('A2', '日期', bold)
-  worksheet.write('B2', '选题名称', bold)
-  worksheet.write('C2', '编辑', bold)
-  worksheet.write('D2', '校对', bold)
-  worksheet.write('E2', '文字', bold)
-  worksheet.write('F2', '图片', bold)
-  worksheet.write('G2', '视频', bold)
-  worksheet.write('H2', '音频', bold)
-  worksheet.write('I2', '学生主编', bold)
-  worksheet.write('J2', '推文链接', bold)
+  worksheet.write('A2', '负责人', bold)
+  worksheet.write('B2', '日期', bold)
+  worksheet.write('C2', '选题名称', bold)
+  worksheet.write('D2', '编辑', bold)
+  worksheet.write('E2', '校对', bold)
+  worksheet.write('F2', '文字', bold)
+  worksheet.write('G2', '字数', bold)
+  worksheet.write('H2', '图片', bold)
+  worksheet.write('I2', '张数', bold)
+  worksheet.write('J2', '视频', bold)
+  worksheet.write('K2', '音频', bold)
+  worksheet.write('L2', '学生主编', bold)
+  worksheet.write('M2', '推文链接', bold)
   time.sleep(0.5)
 
   parser = etree.HTMLParser(encoding='utf-8')
@@ -75,7 +76,7 @@ def GetName(siteList,path):
       #转换为其他日期格式,如:"%Y-%m-%d %H:%M:%S"
       timeArray = time.localtime(date1)
       otherStyleTime = time.strftime("%m月%d日", timeArray)
-      worksheet.write('A'+str(line), otherStyleTime,alignCenter)
+      worksheet.write('B'+str(line), otherStyleTime,alignCenter)
       print(otherStyleTime,end=" ")
     except Exception as result:
       try:
@@ -84,7 +85,7 @@ def GetName(siteList,path):
         date2 = int(date2)
         timeArray2 = time.localtime(date2)
         otherStyleTime2 = time.strftime("%m月%d日", timeArray2)
-        worksheet.write('A'+str(line), otherStyleTime2,alignCenter)
+        worksheet.write('B'+str(line), otherStyleTime2,alignCenter)
         print(otherStyleTime2,end=" ")
       except Exception as result:
         pass
@@ -92,7 +93,7 @@ def GetName(siteList,path):
     try:
       html = etree.HTML(reponse)        
       activity_name = html.xpath("//h1")[0].text.strip() #标题
-      worksheet.write('B'+str(line), activity_name,alignCenter)
+      worksheet.write('C'+str(line), activity_name,alignCenter)
       print(activity_name)
     except Exception as result:
       pass
@@ -100,7 +101,7 @@ def GetName(siteList,path):
     try:
       bianJi = r"编辑：([\u4e00-\u9fa5].*?)<"
       bianJi = re.search(bianJi, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('C'+str(line),bianJi,alignCenter)
+      worksheet.write('D'+str(line),bianJi,alignCenter)
         #print(bianJi)
     except Exception as result:
       pass
@@ -108,7 +109,7 @@ def GetName(siteList,path):
     try:
       jiaoDui = r"校对：([\u4e00-\u9fa5].*?)<"
       jiaoDui = re.search(jiaoDui, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('D'+str(line),jiaoDui,alignCenter)
+      worksheet.write('E'+str(line),jiaoDui,alignCenter)
     #print(jiaoDui)
     except Exception as result:
       pass
@@ -116,7 +117,7 @@ def GetName(siteList,path):
     try:
       text = r"文字：([\u4e00-\u9fa5].*?)<"
       text = re.search(text, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('E'+str(line),text,alignCenter)
+      worksheet.write('F'+str(line),text,alignCenter)
       #print(text)
     except Exception as result:
       pass
@@ -124,7 +125,7 @@ def GetName(siteList,path):
     try:
       picture = r"图片：([\u4e00-\u9fa5].*?)<"
       picture = re.search(picture, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('F'+str(line),picture,alignCenter)
+      worksheet.write('H'+str(line),picture,alignCenter)
       #print(picture)
     except Exception as result:
       pass
@@ -132,7 +133,7 @@ def GetName(siteList,path):
     try:
       video = r"视频：([\u4e00-\u9fa5].*?)<"
       video = re.search(video, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('G'+str(line),video,alignCenter)
+      worksheet.write('J'+str(line),video,alignCenter)
       #print(video)
     except Exception as result:
       pass
@@ -140,7 +141,7 @@ def GetName(siteList,path):
     try:
       audio = r"音频：([\u4e00-\u9fa5].*?)<"
       audio = re.search(audio, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('H'+str(line),audio,alignCenter)
+      worksheet.write('K'+str(line),audio,alignCenter)
       #print(audio)
     except Exception as result:
       pass
@@ -148,13 +149,13 @@ def GetName(siteList,path):
     try:
       zhuBian = r"学生主编：([\u4e00-\u9fa5].*?)<"
       zhuBian = re.search(zhuBian, reponse).group(1).replace("&nbsp;","、")
-      worksheet.write('I'+str(line),zhuBian,alignCenter)
+      worksheet.write('L'+str(line),zhuBian,alignCenter)
       #print(zhuBian)
     except Exception as result:
       pass
 
     try:
-      worksheet.write('J'+str(line), siteList[i])
+      worksheet.write('M'+str(line), siteList[i])
     except Exception as result:
       #print("pass")
       pass
@@ -170,6 +171,7 @@ if __name__ == '__main__':
     application_path = os.path.dirname(__file__)
 
   path = application_path.replace("\\","/")+"/"
+  print("关注微信公众号【小知识酷】，获取更多相关内容和程序教程~\n\n")
   print(path)
   minNum = input("请输入html文件最小起始数：")
   maxNum = input("请输入html文件最大终止数：")
